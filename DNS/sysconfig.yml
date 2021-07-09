@@ -1,0 +1,36 @@
+---
+- name:
+  hosts: centos8-boxes
+  become: yes
+  gather_facts: no
+  tasks:
+
+    - name: install bind-utils package
+      yum:
+        name: bind-utils
+        state: latest
+    
+    #- name: Remove 8.8.8.8 from network file
+    #  lineinfile:
+    #    path: /etc/sysconfig/network-scripts/ifcfg-ens192
+    #    state: absent
+    #    regexp: 'DNS*'
+
+    #- name: Change /etc/resolv.conf
+    #  shell: echo 'nameserver 192.168.34.102' > /etc/resolv.conf
+    #  shell: echo 'nameserver 8.8.8.8' >> /etc/resolv.conf
+
+    - name: Add dns ips to all servers
+      lineinfile:
+        path: /etc/sysconfig/network-scripts/ifcfg-ens192
+        line: "{{ item }}"
+      with_items:
+      - 'DNS1=192.168.34.102'
+      #- 'DNS2=192.168.34.103'
+      #- 'DNS3=192.168.34.104'
+      - 'DNS2=8.8.8.8'
+    - name: restart network
+      shell:
+        cmd: ifdown ifcfg-ens192 && ifup ifcfg-ens192
+  
+

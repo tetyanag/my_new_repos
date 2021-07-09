@@ -1,0 +1,54 @@
+---
+- name: install initial packages on all boxes
+  hosts: loadbalance
+  remote_user: ansible
+  become: true
+  
+  tasks:
+  - name: install haproxy
+    yum:
+      name: haproxy
+      state: latest
+
+  - name: run haproxy
+    service:
+      name: haproxy
+      state: started
+
+  - name: enable haproxy
+    service:
+      name: haproxy
+      enabled: yes
+
+  - name: install firewalld
+    yum:
+      name: firewalld
+      state: latest
+
+  - name: run firewalld
+    service:
+      name: firewalld
+      state: started
+
+  - name: enable firewalld
+    service:
+      name: firewalld
+      enabled: yes
+
+  - name: firewalld permits haproxy service
+    firewalld:
+      service: haproxy
+      permanent: true
+      state: enabled
+
+  - name: web access firewall rule
+    firewalld:
+      rich_rule: rule forward-port port=80 protocol=tcp to-port=8080 family=ipv4
+      zone: public
+      permanent: true
+      state: enabled
+
+  - name: reload firewall service
+    service:
+      name: firewalld
+      state: restarted

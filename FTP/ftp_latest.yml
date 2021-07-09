@@ -1,0 +1,71 @@
+---
+#- hosts: ftp_client
+#  become: yes
+#  tasks: 
+#    - name: Install ftpclient
+#      yum: name=ftp
+
+- hosts: ftp
+  become: yes
+  tasks:
+    - name: Install vsftpd
+      yum:
+        name: "{{ item }}"
+        state: latest
+      with_items:
+        - vsftpd
+
+    - name: Creating a user
+      shell: 'id ftpuser || useradd ftpuser -d /var/ftp/user -p $(openssl passwd password)'
+
+#    - name: Disabling SELINUX
+#      shell: 'setenforce 0'
+
+    - name: Creating ftp directory
+      file:
+        path: /var/ftp/pub
+        state: directory
+        owner: ftpuser
+        group: ftpuser
+        mode: '0075'
+
+    - name: Configuring /etc/vsftpd/vsftpd.conf
+      ansible.builtin.lineinfile:
+        path: /etc/vsftpd/vsftpd.conf
+        regexp: '^#anonymous_enable='
+        line: anonymous_enable=YES
+
+    - name: Allowing local home directories
+      ansible.builtin.lineinfile:
+        path: /etc/vsftpd/vsftpd.conf
+        regexp: '^#chroot_local_user=YES'
+        line: chroot_local_user=YES
+
+    - name: Configuring /etc/vsftpd/vsftpd.conf
+      ansible.builtin.lineinfile:
+        path: /etc/vsftpd/vsftpd.conf
+        regexp: '^#local_enable=YES'
+        line: local_enable=YES
+
+    - name: Set anonimous root
+      ansible.builtin.lineinfile:
+        path: /etc/vsftpd/vsftpd.conf
+        line: anon_root=/var/ftp/pub
+        create: yes
+
+    - name: Creating jailed user config
+      ansible.builtin.template:
+        src: /var/ansiblehome/Final-project/FTP/chroot_list
+        dest: /etc/vsftpd/chroot_list
+
+    - name: Allow writable chroot
+      ansible.builtin.lineinfile:
+        path: /etc/vsftpd/vsftpd.conf
+        line: allow_writeable_chroot=YES
+        create: yes 
+ 
+    - name: Restart FTP service
+      systemd:
+         state: reloaded
+         name: vsftpd
+         enabled: yes

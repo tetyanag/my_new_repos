@@ -1,0 +1,65 @@
+---
+- hosts: prdx-nfs12
+  become: yes
+  tasks:
+
+    # - name: Enable EPEL Repository on CentOS 7
+    #   yum:
+    #     name: epel-release
+    #     state: latest
+    - name: Install nfs and nfs-utils 
+      yum:
+        name: nfs-utils
+        state: latest
+
+    # - name: Stop and disable firewalld.
+    #   service:
+    #     name: firewalld
+    #     state: stopped
+    #     enabled: False
+
+    # - name: change selinux status
+    #   shell:
+    #     cmd: setenforce 0
+
+#    - name: disable selinux
+#      shell:
+#        cmd: sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
+
+    - name: Create a mountable directory if it does not exist
+      file:
+        path: /share 
+        state: directory
+        owner: nfsnobody
+        group: nfsnobody 
+        mode: '0775'
+    - name: Create a mountable directory if it does not exist
+      file:
+        path: /web 
+        state: directory
+        owner: nfsnobody
+        group: nfsnobody 
+        mode: '0775'
+    - name: enable rpcbind nfslock nfs
+      service:
+        name: "{{ item }}"
+        state: started
+        enabled: yes
+      with_items:
+        - rpcbind
+        - nfslock
+        - nfs
+        - nfs-idmap
+    - name: Copy exports file.
+      template:
+        src: /var/ansiblehome/Final-project/NFS/exportfs.j2
+        dest: /etc/exports
+        owner: ansible
+        group: ansible
+        mode: 0644
+    - name: NFS apply change configrue
+      systemd:
+         state: reloaded
+         name: nfs
+    - name: export
+      shell: exportfs -a

@@ -1,0 +1,48 @@
+---
+- hosts: prdx-ldap12.ziyotek2.local
+  remote_user: ansible
+  become: true
+  gather_facts: no
+  become_method: sudo
+  tasks:
+ 
+   - name: install autofs
+     package: name=autofs state=latest
+   - name: install nfs-utils
+     yum: name=nfs-utils state=present
+   - name: start autofs
+     service: name=autofs state=started enabled=true
+   - name: configure login.def
+     template:
+       src: /var/ansiblehome/Final-project/NFS/configure.defs.j2
+       dest: /etc/login.defs
+     notify: restart autofs
+   - name: install oddjob-mkhomedir
+     yum:
+       name: oddjob-mkhomedir
+       state: latest
+       
+   - name: run Auto-creation
+     shell: authconfig --enablemkhomedir --update
+
+   - name: configuring autofs
+     template:
+       src: /var/ansiblehome/Final-project/NFS/master.j2
+       dest: /etc/auto.master
+     notify: restart autofs
+
+   - name: create share file
+     file:
+       path: /etc/auto.home
+       state: touch
+   - name: configuring auto.home
+     template:
+       src: /var/ansiblehome/Final-project/NFS/auto.home.j2
+       dest: /etc/auto.home
+     notify: restart autofs
+
+  handlers:
+   - name: restart autofs
+     service: name=autofs state=restarted
+
+    

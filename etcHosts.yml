@@ -1,0 +1,26 @@
+---
+- hosts: allservers
+  become: yes
+  tasks:
+  # - name: rename /etc/hosts
+  #   shell:
+  #     cmd: mv /etc/hosts /etc/hosts.bk
+
+  - name: create etc/hosts file
+    file:
+        path: /etc/hosts 
+        state: touch 
+        owner: root
+        group: root 
+        mode: '0775'
+
+  - name: Copy localhost to etchost gile
+    template:
+      src: /var/ansiblehome/Final-project/localhost.j2
+      dest: /etc/hosts
+
+ #- name: move host.bk back to etchost
+ #  shell:
+ #    cmd: mv /etc/hosts.bk /etc/hosts
+  
+     

@@ -1,0 +1,35 @@
+---
+- hosts: mw
+  become: yes
+  remote_user: ansible
+  tasks:
+    - name: Install staff
+      yum:
+        name: yum-utils
+        state: latest
+    - name: Add repo
+      shell: 'yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo'
+    - name: Install docker packages
+      yum:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - docker-ce
+        - docker-ce-cli
+        - containerd.io
+    - name: Restart Docker
+      systemd:
+        name: docker
+        state: restarted
+        enabled: yes 
+    - name: Creating a group
+      shell: "getent group docker || groupadd docker"
+    - name: Creating a user
+      shell: 'getent passwd dockeradmin || useradd dockeradmin -p $(openssl passwd password)  && echo "dockeradmin ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/dockerdmin'
+    - name: Addig user to the group
+      shell: "getent passwd dockeradmin && getent group docker && usermod -G docker dockeradmin"
+    - name: Install docker-compose
+      shell: 'curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose'
+    - name: Apply permissions
+      shell: "chmod +x /usr/local/bin/docker-compose"
+      shell: "ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose"

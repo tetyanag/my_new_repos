@@ -1,0 +1,86 @@
+### Dns and slave installationa and configuration source https://www.tecmint.com/setup-master-slave-dns-server-in-centos/
+---
+- name: install packages on dns boxes
+  hosts: dns-servers
+  remote_user: ansible
+  gather_facts: no
+  become: yes
+  
+  tasks:
+  - name: install packages
+    yum:
+      name: ['bind', 'bind-utils']
+      state: latest
+  - name: start named
+    service: 
+      name: named 
+      state: started  
+
+- name: setup dns master
+  hosts: prdx-nsmaster12
+  remote_user: ansible
+  become: yes
+   
+  tasks:
+  - name: configure dns master
+    template:
+      src: /var/ansiblehome/project/templates/named.conf.j2
+      dest: /etc/named.conf
+  - name: copying forward file
+    template:
+      src: /var/ansiblehome/project/templates/ziyotek2.local.fwd.zone.j2
+      dest: /var/named/ziyotek2.local.fwd.zone
+  - name: copying reverse file
+    template:
+      src: /var/ansiblehome/project/templates/ziyotek2.local.rev.zone.j2
+      dest: /var/named/ziyotek2.local.rev.zone
+      # notify:
+      # - Restart named
+  handlers:
+  - name: restart autofs
+    service: name=autofs state=restarted
+    
+  
+
+  - name: start named
+    service: 
+      name: named 
+      state: started
+
+- name: setup dns slave 
+  hosts: prdx-nsworker12
+  remote_user: ansible
+  become: yes
+  
+  tasks:
+  - name: configure dns slave
+    template:
+      src: /var/ansiblehome/project/templates/dns-slave.j2
+      dest: /etc/named.conf
+      # notify:
+      # - Restart named
+    
+  
+  - name: start named
+    service: 
+      name: named 
+      state: started
+    
+- name: setup dns slave 2
+  hosts: prdx-nsworker22
+  remote_user: ansible
+  become: yes
+  
+  tasks:
+  - name: configure dns slave2
+    template:
+      src: /var/ansiblehome/project/templates/dns-slave-2.j2
+      dest: /etc/named.conf
+  handlers:
+  - name: restart autofs
+    service: name=autofs state=restarted
+  
+  - name: start named
+    service: 
+      name: named 
+      state: started

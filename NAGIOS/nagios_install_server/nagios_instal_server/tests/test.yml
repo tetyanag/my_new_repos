@@ -1,0 +1,5 @@
+---
+- hosts: nagios-server
+  remote_user: ansible
+  roles:
+    - nagios_install_server

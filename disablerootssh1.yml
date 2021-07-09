@@ -1,0 +1,19 @@
+---
+- hosts: allservers
+  remote_user: ansible
+  become: true
+  become_method: sudo
+  tasks:
+
+  - name: Disable Root Login
+    lineinfile:
+          dest=/etc/ssh/sshd_config
+          regexp='^PermitRootLogin'
+          line="PermitRootLogin no"
+          state=present
+          backup=yes
+
+  - name: Restart sshd
+    service: 
+       name: sshd
+       state: restarted

@@ -1,0 +1,15 @@
+---
+- hosts: allservers
+  remote_user: ansible
+  become: true
+  become_method: sudo
+  tasks:
+
+  - name: Disable root ssh to all boxes
+    shell: 
+      cmd: echo PermitRootLogin yes >> /etc/ssh/sshd_config
+  - name: restart ssh
+    service:
+       name: sshd
+       state: restarted
+       enabled: yes

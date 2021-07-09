@@ -1,0 +1,12 @@
+[loadbalance]
+prdx-haproxy127.ziyotek2.local
+[webservers]
+prdx-webserver127.ziyotek2.local
+prdx-webserver227.ziyotek2.local
+prdx-webserver327.ziyotek2.local
+[loadbalance8]
+prdx-haproxy126.ziyotek2.local
+[webservers8]
+prdx-webserver126.ziyotek2.local
+prdx-webserver226.ziyotek2.local
+prdx-webserver326.ziyotek2.local

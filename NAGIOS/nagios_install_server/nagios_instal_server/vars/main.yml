@@ -1,0 +1,30 @@
+---
+# vars file for nagios_install_server
+
+# Server
+nagios_server: 192.168.34.112
+
+# Client
+nagios_alert_email_id: startek@gmail.com
+nagiosadmin_password: nagiosadmin
+nagios_client_details:
+  - { hostname: "192.168.34.100", alias: "NTP1", address: 192.168.34.100, services: [ "ping", "ssh", "part" ] }
+  - { hostname: "192.168.34.101", alias: "NTP2", address: 192.168.34.101, services: [ "ping", "ssh" ] }
+  - { hostname: "192.168.34.102", alias: "DNSMASTER", address: 192.168.34.102, services: [ "ping", "ssh" ] }
+  - { hostname: "192.168.34.103", alias: "DNSSLAVE", address: 192.168.34.103, services: [ "ping", "ssh" ] }
+  - { hostname: "192.168.34.104", alias: "DNSSLAVE2", address: 192.168.34.104, services: [ "ping", "ssh" ] }
+  - { hostname: "192.168.34.105", alias: "FTP", address: 192.168.34.105, services: [ "ping", "ssh" ] }
+  - { hostname: "192.168.34.106", alias: "NFS", address: 192.168.34.106, services: [ "ping", "ssh", "swap" ] }
+  - { hostname: "192.168.34.107", alias: "DB", address: 192.168.34.107, services: [ "ping", "ssh" ] }
+  - { hostname: "192.168.34.108", alias: "WEB1", address: 192.168.34.108, services: [ "ping", "ssh", "http" ] }
+  - { hostname: "192.168.34.109", alias: "WEB2", address: 192.168.34.109, services: [ "ping", "ssh", "http" ] }
+  - { hostname: "192.168.34.110", alias: "WEB3", address: 192.168.34.110, services: [ "ping", "ssh", "http" ] }
+  - { hostname: "192.168.34.111", alias: "HAPROXY", address: 192.168.34.111, services: [ "ping", "ssh" ] }
+  - { hostname: "192.168.34.113", alias: "LDAP", address: 192.168.34.113, services: [ "ping", "ssh" ] }
+  - { hostname: "192.168.34.114", alias: "ANSIBLE", address: 192.168.34.114, services: [ "ping", "ssh" ] }
+  - { hostname: "192.168.34.115", alias: "WIKI", address: 192.168.34.115, services: [ "ping", "ssh", "http" ] }
+  - { hostname: "192.168.34.119", alias: "JENKINS", address: 192.168.34.119, services: [ "ping", "ssh" ] }
+  - { hostname: "192.168.34.120", alias: "KUBM", address: 192.168.34.120, services: [ "ping", "ssh", "cpu" ] }
+  - { hostname: "192.168.34.121", alias: "KUBW1", address: 192.168.34.121, services: [ "ping", "ssh" ] }
+  - { hostname: "192.168.34.122", alias: "KUBW2", address: 192.168.34.122, services: [ "ping", "ssh" ] }
+

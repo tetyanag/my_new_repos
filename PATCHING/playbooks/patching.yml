@@ -1,0 +1,11 @@
+---
+- name: OS update
+  hosts: [allservers] 
+  remote_user: ansible
+  become: true
+  gather_facts: yes
+  tasks:
+    - name: OS update
+      include_role:
+        name: /var/ansiblehome/Final-project/PATCHING/playbooks/tasks/
+

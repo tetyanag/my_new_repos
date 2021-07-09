@@ -1,0 +1,7 @@
+---
+- name: Playbook for configuring nagios server including clients and client services monitoring
+  hosts: nagios-clients
+  remote_user: ansible
+  become: yes
+  roles:
+    - /var/ansiblehome/Final-project/NAGIOS/nagios_install_server

@@ -1,0 +1,52 @@
+options {
+        listen-on port 53 { 127.0.0.1; 192.168.34.102; }; # Here we need to add our Master DNS Server IP.
+        listen-on-v6 port 53 { ::1; };
+        directory       "/var/named";
+        dump-file       "/var/named/data/cache_dump.db";
+        statistics-file "/var/named/data/named_stats.txt";
+        memstatistics-file "/var/named/data/named_mem_stats.txt";
+        allow-query     { localhost; 192.168.34.0/24; }; # subnet range where my hosts are allowed to query our DNS.
+        allow-transfer     { localhost; 192.168.34.103; 192.168.34.104; };  # Here we need to our Slave DNS server IP.
+        allow-notify       { 192.168.34.103; 192.168.34.104; }
+        recursion yes;
+
+        dnssec-enable yes;
+        dnssec-validation yes;
+        dnssec-lookaside auto;
+
+        /* Path to ISC DLV key */
+        bindkeys-file "/etc/named.iscdlv.key";
+
+        managed-keys-directory "/var/named/dynamic";
+};
+
+logging {
+        channel default_debug {
+                file "data/named.run";
+                severity dynamic;
+        };
+};
+
+zone "." IN {
+        type hint;
+        file "named.ca";
+};
+
+## Define our forward & reverse Zone file here for ziyotek2.local.
+
+# Forward my fellow soldiers
+zone"ziyotek2.local" IN {
+type master;
+file "ziyotek2.local.fwd.zone";
+allow-update { none; };
+};
+# Reverse my fellow soldiers
+zone"34.168.192.in-addr.arpa" IN {
+type master;
+file "ziyotek2.local.rev.zone";
+allow-update { none; };
+};
+
+#####
+include "/etc/named.rfc1912.zones";
+include "/etc/named.root.key";

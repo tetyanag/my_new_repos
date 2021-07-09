@@ -1,0 +1,36 @@
+--- 
+- hosts: test-docker12.ziyotek2.local
+  become: yes
+  remote_user: ansible
+  vars:
+    address: 192.168.34.105
+  tasks:
+    - name: Creating oldrepo directory
+      ansible.builtin.file:
+        path: /etc/yum.repos.old
+        state: directory
+        mode: '0755'
+    - name: Copying old repos to directory oldrepos
+      ansible.builtin.copy:
+        remote_src: yes
+        src: /etc/yum.repos.d/
+        dest: /etc/yum.repos.old
+
+    - name: Deleting old repos in yum.repos.d
+      ansible.builtin.file:
+          path: /etc/yum.repos.d/
+          state: absent
+ 
+    - name: Creating yum.repos.d /etc
+      ansible.builtin.file:
+          path: /etc/yum.repos.d/
+          state: directory
+
+    - name: Creaing local repo from template
+      template:
+        src: remoterepo.j2
+        dest: /etc/yum.repos.d/remote.repo
+    - name: Cleaning
+      shell: 'yum clean all'
+    - name: Repolist
+      shell: 'yum repolist'

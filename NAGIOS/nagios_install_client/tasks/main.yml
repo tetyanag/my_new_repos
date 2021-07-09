@@ -1,0 +1,28 @@
+---
+# tasks file for nagios_install_client
+# To configure nagios server and client use below playbook:
+
+# tasks:
+  - name: Install epel-release repository
+    yum:
+      name: epel-release
+      state: present
+
+  - name: Install nrpe, nagios-plugins-all
+    yum:
+      name: ['nrpe', 'nagios-plugins-all', 'openssl']
+      state: present
+
+
+  - name: Configure nagios server IP in nrpe configuration file
+    lineinfile:
+      dest: /etc/nagios/nrpe.cfg
+      regexp: allowed_hosts=
+      line: allowed_hosts=127.0.0.1,{{nagios_server}}
+
+  - name: Start nrpe service and enable it on startup
+    service:
+      name: nrpe
+      state: restarted
+      enabled: yes
+

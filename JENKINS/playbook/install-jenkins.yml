@@ -1,0 +1,68 @@
+---
+- name: install wget
+  hosts: jenkins
+  ansible.builtin.yum:
+    name: wget
+    state: present
+- name: install git
+  ansible.builtin.yum:
+    name: git
+    state: present
+
+- name: install openjdk
+  ansible.builtin.yum:
+    name: java-1.8.0-openjdk
+    state: present
+
+- name: download jenkins.repo
+  get_url:
+    url: http://pkg.jenkins.io/redhat-stable/jenkins.repo
+    dest: /etc/yum.repos.d/jenkins.repo
+
+#- name: import jenkins key
+#  rpm_key:
+#    state: present
+#    key: https://jenkins-ci.org/redhat/jenkins-ci.org.key
+
+- name: import key
+  shell: rpm --import https://jenkins.io/redhat/jenkins.io.key
+
+
+- name: install jenkins
+  ansible.builtin.yum:
+    name: jenkins
+    state: present
+
+- name: start jenkins
+  systemd:
+    name: jenkins
+    state: started
+
+- name: enable jenkins
+  systemd:
+    name: jenkins
+    enabled: true
+
+- name: sleep for 1 seconds and continue with play
+  wait_for: timeout=1
+  delegate_to: localhost
+
+- name: init password jenkin
+  shell: cat /var/lib/jenkins/secrets/initialAdminPassword
+  changed_when: false
+  register: result
+
+- name: print init password jenkins
+  debug:
+    var: result.stdout
+
+- name: disable firewall
+  systemd:
+    name: firewalld
+    enabled: false
+
+- name: stop firewall
+  systemd:
+    name: firewalld
+    state: stopped
+

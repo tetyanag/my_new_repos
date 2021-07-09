@@ -1,0 +1,65 @@
+---
+- hosts: prdx-nagios12
+  become: yes
+  remote_user: ansible
+  tasks:
+    - name: Create remote file 
+      template:
+        src: /var/ansiblehome/NAGIOS/server.j2
+        dest: /usr/local/nagios/etc/servers/{{ item.hostname }}.cfg
+      with_items:
+        - { address: "192.168.34.100", hostname: "prdx-ntp12.ziyotek2.local" }
+        - { address: "192.168.34.101", hostname: "prdx-ntp22.ziyotek2.local" }
+        - { address: "192.168.34.102", hostname: "prdx-nsmaster12.ziyotek2.local" }
+        - { address: "192.168.34.103", hostname: "prdx-nsworker12.ziyotek2.local" }
+        - { address: "192.168.34.104", hostname: "prdx-nsworker22.ziyotek2.local" }
+        - { address: "192.168.34.105", hostname: "prdx-ftp12.ziyotek2.local" }
+        - { address: "192.168.34.106", hostname: "prdx-nfs12.ziyotek2.local" }
+        - { address: "192.168.34.107", hostname: "prdx-db127.ziyotek2.local" }
+        - { address: "192.168.34.108", hostname: "prdx-webserver127.ziyotek2.local" }
+        - { address: "192.168.34.109", hostname: "prdx-webserver227.ziyotek2.local" }
+        - { address: "192.168.34.110", hostname: "prdx-webserver327.ziyotek2.local" }
+        - { address: "192.168.34.111", hostname: "prdx-haproxy127.ziyotek2.local" }
+        - { address: "192.168.34.112", hostname: "prdx-nagios12.ziyotek2.local" }
+        - { address: "192.168.34.113", hostname: "prdx-ldap12.ziyotek2.local" }
+        - { address: "192.168.34.114", hostname: "prdx-ansible12.ziyotek2.local" }
+        - { address: "192.168.34.115", hostname: "prdx-wiki12.ziyotek2.local" }
+        - { address: "192.168.34.116", hostname: "prdx-ntp22.ziyotek2.local" }
+        - { address: "192.168.34.117", hostname: "prdx-ntp22.ziyotek2.local" }
+        - { address: "192.168.34.118", hostname: "prdx-ntp22.ziyotek2.local" }
+        - { address: "192.168.34.119", hostname: "prdx-jenkins12.ziyotek2.local" }
+        - { address: "192.168.34.120", hostname: "prdx-kubem12.ziyotek2.local" }
+        - { address: "192.168.34.121", hostname: "prdx-kubew12.ziyotek2.local" }
+        - { address: "192.168.34.122", hostname: "prdx-kubew22.ziyotek2.local" }
+        - { address: "192.168.34.123", hostname: "prdx-db126.ziyotek2.local" }
+        - { address: "192.168.34.124", hostname: "prdx-webserver126.ziyotek2.local" }
+        - { address: "192.168.34.125", hostname: "prdx-webserver226.ziyotek2.local" }
+        - { address: "192.168.34.126", hostname: "prdx-webserver326.ziyotek2.local" }
+        - { address: "192.168.34.127", hostname: "prdx-haproxy126.ziyotek2.local" }
+    - name: Create remote file
+      template:
+        src: /var/ansiblehome/NAGIOS/server_http.j2
+        dest: /usr/local/nagios/etc/servers/{{ item.hostname }}.cfg
+      with_items:
+        - { address: "192.168.34.102", hostname: "prdx-nsmaster12.ziyotek2.local" }
+        - { address: "192.168.34.103", hostname: "prdx-nsworker12.ziyotek2.local" }
+        - { address: "192.168.34.104", hostname: "prdx-nsworker22.ziyotek2.local" }
+        - { address: "192.168.34.105", hostname: "prdx-ftp12.ziyotek2.local" }
+        - { address: "192.168.34.106", hostname: "prdx-nfs12.ziyotek2.local" }
+        - { address: "192.168.34.107", hostname: "prdx-db127.ziyotek2.local" }
+        - { address: "192.168.34.108", hostname: "prdx-webserver127.ziyotek2.local" }
+        - { address: "192.168.34.109", hostname: "prdx-webserver227.ziyotek2.local" }
+        - { address: "192.168.34.110", hostname: "prdx-webserver327.ziyotek2.local" }
+        - { address: "192.168.34.111", hostname: "prdx-haproxy127.ziyotek2.local" }
+        - { address: "192.168.34.112", hostname: "prdx-nagios12.ziyotek2.local" }
+        - { address: "192.168.34.113", hostname: "prdx-ldap12.ziyotek2.local" }
+        - { address: "192.168.34.115", hostname: "prdx-wiki12.ziyotek2.local" }
+        - { address: "192.168.34.123", hostname: "prdx-db126.ziyotek2.local" }
+        - { address: "192.168.34.124", hostname: "prdx-webserver126.ziyotek2.local" }
+        - { address: "192.168.34.125", hostname: "prdx-webserver226.ziyotek2.local" }
+        - { address: "192.168.34.126", hostname: "prdx-webserver326.ziyotek2.local" }
+        - { address: "192.168.34.127", hostname: "prdx-haproxy126.ziyotek2.local" }
+    - name: 
+      systemd:
+        name: nagios
+        state: restarted

@@ -1,0 +1,29 @@
+GID_MAX                 60000
+# System accounts
+SYS_GID_MIN               201
+SYS_GID_MAX               999
+
+#
+# If defined, this command is run when removing a user.
+# It should remove any at/cron/print jobs etc. owned by
+# the user to be removed (passed as the first argument).
+#
+#USERDEL_CMD    /usr/sbin/userdel_local
+
+#
+# If useradd should create home directories for users by default
+# On RH systems, we do. This option is overridden with the -m flag on
+# useradd command line.
+#
+CREATE_HOME     yes
+
+# The permission mask is initialized to this value. If not specified,
+# the permission mask will be initialized to 022.
+UMASK           022
+
+# This enables userdel to remove user groups if no members exist.
+#
+USERGROUPS_ENAB yes
+
+# Use SHA512 to encrypt password.
+ENCRYPT_METHOD SHA512

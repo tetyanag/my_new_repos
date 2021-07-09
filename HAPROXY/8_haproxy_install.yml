@@ -1,0 +1,45 @@
+---
+- name: install initial packages on all boxes
+  hosts: prdx-haproxy126.ziyotek2.local
+  remote_user: ansible
+  become: true
+
+  tasks:
+  - name: install haproxy
+    yum:
+      name: haproxy
+      state: latest
+
+  - name: Send config file from template
+    template:
+      src: haproxy8.cfg
+      dest: /etc/haproxy/haproxy.cfg
+      backup: yes
+
+  - name: replace the line
+    lineinfile:
+      path: /etc/haproxy/haproxy.cfg
+      regexp: "    server  prdx-webserver127.ziyotek2.local 192.168.34.108:80 check       #web001"
+      line: "    server  prdx-webserver126.ziyotek2.local 192.168.34.124:80 check       #web001"
+
+  - name: replace the line
+    lineinfile:
+      path: /etc/haproxy/haproxy.cfg
+      regexp: "    server  prdx-webserver227.ziyotek2.local 192.168.34.109:80 check       #web002"
+      line: "    server  prdx-webserver226.ziyotek2.local 192.168.34.125:80 check       #web002"
+  - name: replace the line
+    lineinfile:
+      path: /etc/haproxy/haproxy.cfg
+      regexp: "    server  prdx-webserver327.ziyotek2.local 192.168.34.110:80 check       #web003"
+      line: "    server  prdx-webserver326.ziyotek2.local 192.168.34.126:80 check       #web003"
+
+  - name: run haproxy
+    service:
+      name: haproxy
+      state: started
+
+  - name: enable haproxy
+    service:
+      name: haproxy
+      enabled: yes
+

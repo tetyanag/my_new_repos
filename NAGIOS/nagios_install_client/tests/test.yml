@@ -1,0 +1,6 @@
+---
+- hosts: nagios-clients
+  remote_user: ansible
+  become: yes
+  roles:
+    - nagios_install_client 

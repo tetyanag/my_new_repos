@@ -1,0 +1,81 @@
+---
+- name: Install Mariadb server
+  hosts: db-server
+  become: yes
+  gather_facts: no
+  vars:
+    packages:
+      - mariadb-server
+      - MySQL-python
+    service: mariadb
+    src_file: "http://192.168.34.114/my.cnf.template"
+    dst_file: /etc/my.cnf
+  tasks:
+    - name: Install {{ packages }} package
+      yum:
+        name: "{{ packages }}"
+        state: latest
+      notify:
+        - start_service
+    - name: Enable mariadb
+      service:
+        name: mariadb
+        enabled: yes
+        state: started
+      notify:
+        - set_password
+
+    - name: Install php and httpd for lamp stack
+      yum:
+        name: httpd
+        state: latest
+    - name: Install php
+      yum:
+        name: php
+        state: latest
+    - name: create my php file
+      copy:
+        src: /var/ansiblehome/Final-project/DB/templates/my.php
+        dest: /var/www/html/my.php
+
+    - name: httpd enabled and running
+      service:
+        name: httpd
+        enabled: yes
+        state: started
+    - name: Install phpmysql
+      yum:
+        name: php-mysql
+        state: latest
+    - name: Install Epel relase
+      yum:
+        name: epel-release
+        state: latest
+    - name: Install phpmyadmin
+      yum:
+        name: phpmyadmin
+        state: latest
+    - name: phpmyadmin config sourcing
+      copy:
+        src: /var/ansiblehome/Final-project/DB/templates/phpmyadmin.conf
+        dest: /etc/httpd/conf.d/phpMyAdmin.conf
+      notify: restart_httpd
+
+  handlers:
+    - name: start_service
+      service:
+        name: "{{ service }}"
+        state: restarted
+
+    - name: restart httpd
+      service:
+        name: httpd
+        state: restarted
+
+    - name: set_password
+      mysql_user:
+        name: root
+        password: password
+        priv: '*,*:ALL,GRANT'
+        state: present
+

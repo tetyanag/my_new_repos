@@ -1,0 +1,89 @@
+# tasks:
+  - name: Install epel-release repository
+    yum:
+      name: epel-release
+      state: present
+
+  - name: Install nagios, nagios-plugins-all and nrpe packages
+    yum:
+      name: ['nagios', 'nagios-plugins-all', 'nrpe', 'nagios-plugins-nrpe']
+      state: 'present'
+  
+  - name: start nagios service
+    service:
+      name: nrpe
+      state: restarted
+      enabled: yes
+
+
+  - name: Configure desiried email ID in contacts
+    lineinfile:
+      dest: /etc/nagios/objects/contacts.cfg
+      regexp: email
+      line: email '{{ nagios_alert_email_id }}'
+
+  - name: Copy commands.cfg file with check_nrpe command
+    copy:
+      src: commands.cfg
+      dest: /etc/nagios/objects/commands.cfg
+      owner: 'nagios'
+      group: 'nagios'
+      mode: '0755'
+
+  - name: Create nagiosadmin user for httpd access
+    shell: htpasswd -cb /etc/nagios/passwd nagiosadmin '{{ nagiosadmin_password }}'
+
+  - name: Make sure httpd is installed
+    yum:
+      name: 'httpd'
+      state: 'present'
+
+  - name: Start nagios, httpd services and enable them on startup
+    service:
+      name: '{{ item }}'
+      state: 'restarted'
+      enabled: yes
+    with_items:
+        - httpd
+        - nagios
+
+  - name: Set setuid permissions on /usr/bin/ping to allow nagios user to execute ping
+    file:
+      dest: /usr/bin/ping
+      mode: 4755
+
+  - name: Configure nagios to use clients.conf file
+    lineinfile:
+      dest: /etc/nagios/nagios.cfg
+      insertafter: "cfg_dir=.etc.nagios.conf.d"
+      line: 'cfg_file=/etc/nagios/servers/clients.conf'
+
+  - name: Create servers folder
+    file:
+      dest: /etc/nagios/servers
+      owner: 'nagios'
+      group: 'nagios'
+      mode: 0755
+      state: directory
+
+  - name: Configure server to monitor clients
+    template:
+      src: nagios-clients.j2
+      dest: /etc/nagios/servers/clients.conf
+      owner: 'nagios'
+      group: 'nagios'
+      mode: '0755'
+
+  - name: Restart nagios on server to use new configuration
+    service:
+      name: 'nagios'
+      state: 'restarted'
+
+
+#  - name: Add firewall rules
+#    firewalld:
+#      service: http
+#      state: enabled
+#      immediate: yes
+#      permanent: yes
+

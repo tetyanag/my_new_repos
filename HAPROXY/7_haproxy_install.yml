@@ -1,0 +1,27 @@
+---
+- name: install initial packages on all boxes
+  hosts: loadbalance
+  remote_user: ansible
+  become: true
+  
+  tasks:
+  - name: install haproxy
+    yum:
+      name: haproxy
+      state: latest
+
+  - name: run haproxy
+    service:
+      name: haproxy
+      state: started
+
+  - name: enable haproxy
+    service:
+      name: haproxy
+      enabled: yes
+
+  - name: Send config file from template
+    template:
+      src: haproxy.cfg
+      dest: /etc/haproxy/haproxy.cfg
+      backup: yes

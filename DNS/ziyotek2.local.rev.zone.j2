@@ -1,0 +1,45 @@
+$TTL 86400
+@       IN SOA  prdx-nsmaster12.ziyotek2.local. root.prdx-nsmaster12.ziyotek2.local. (
+                                       6      ; serial
+                                      1D      ; refresh
+                                      1H      ; retry
+                                      1W      ; expire
+                                      3H )    ; minimum
+
+; Name server's
+
+       IN      NS      prdx-nsmaster12.ziyotek2.local.
+       IN      NS      prdx-nsworker12.ziyotek2.local.
+       IN      NS      prdx-nsworker22.ziyotek2.local.
+
+; name servers PTR records
+
+102            IN      PTR     prdx-nsmaster12.ziyotek2.local.
+103            IN      PTR     prdx-nsworker12.ziyotek2.local.
+104            IN      PTR     prdx-nsworker22.ziyotek2.local.
+
+;Hosts in Domain 
+
+
+100	IN	PTR	          prdx-ntp12.ziyotek2.local.
+101	IN	PTR	          prdx-ntp22.ziyotek2.local.
+105	IN	PTR	          prdx-ftp12.ziyotek2.local.
+106	IN	PTR	          prdx-nfs12.ziyotek2.local.
+107	IN	PTR	          prdx-db127.ziyotek2.local.
+108	IN	PTR	          prdx-webserver127.ziyotek2.local.
+109	IN	PTR	          prdx-webserver227.ziyotek2.local.
+110	IN	PTR	          prdx-webserver327.ziyotek2.local.
+111	IN	PTR	          prdx-haproxy127.ziyotek2.local.
+112	IN	PTR	          prdx-nagios12.ziyotek2.local.
+113	IN	PTR	          prdx-ldap12.ziyotek2.local.
+114	IN	PTR	          prdx-ansible12.ziyotek2.local.
+115	IN	PTR	          prdx-wiki12.ziyotek2.local.
+119	IN	PTR	          prdx-jenkins12.ziyotek2.local.
+120	IN	PTR	          prdx-kubem12.ziyotek2.local.
+121	IN	PTR	          prdx-kubew12.ziyotek2.local.
+122	IN	PTR	          prdx-kubew22.ziyotek2.local.
+123     IN      PTR               prdx-db126.ziyotek2.local.
+124     IN      PTR               prdx-webserver126.ziyotek2.local.
+125     IN      PTR               prdx-webserver226.ziyotek2.local.
+126     IN      PTR               prdx-webserver326.ziyotek2.local.
+127     IN      PTR               prdx-haproxy126.ziyotek2.local.

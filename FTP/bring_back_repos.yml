@@ -1,0 +1,18 @@
+--- 
+- hosts: test-docker12.ziyotek2.local
+  become: yes
+  remote_user: ansible
+  tasks:
+  - name: Move repos from oldrepos to yum.repos.d
+    copy:
+      src: /etc/yum.repos.old/
+      dest: /etc/yum.repos.d/
+  - name: Deleting ftp repo
+    ansible.builtin.file:
+      path: /etc/yum.repos.d/remote.repo
+      state: absent  
+  - name: Cleaning
+    shell: yum clean all
+  - name: Repolist
+    shell: yum repolist
+  

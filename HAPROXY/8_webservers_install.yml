@@ -1,0 +1,25 @@
+---
+- name: install initial packages on all boxes
+  hosts: webservers8
+  remote_user: ansible
+  become: true
+
+  tasks:
+  - name: install httpd
+    yum:
+      name: httpd
+      state: latest
+
+  - name: install php
+    yum:
+      name: php
+    
+  - name: run httpd
+    service:
+      name: httpd
+      state: started
+  - name: enable httpd
+    service:
+      name: httpd
+      enabled: yes
+      state: restarted
